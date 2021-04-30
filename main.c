@@ -60,6 +60,7 @@ int main() {
     for (int i=0; i<8; i++)
       pthread_join(thr[i], NULL);
 
+    print_list(list);
     del_list(list);
 
     return 0;

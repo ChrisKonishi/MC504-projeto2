@@ -35,10 +35,8 @@ void *deleter(void *args);
 /* searcher
     Arguments:
         list: linked list;
-        noSearcher: mutex used by the deleter;
-        searcherSwitchMutex: mutex used to safely manipulate searcherCount;
+        index: item to be searched;
         searcherCount: number of running searchers
-        index: item to be searched
 */
 void *searcher(void *args) {
     Searcher_args *arg = (Searcher_args*) args;
@@ -79,11 +77,8 @@ void *searcher(void *args) {
 /* writer
     Arguments:
         list: linked list;
-        noWriter: mutex used by the deleter;
-        writerMutex: self explanatory;
-        writerSwitchMutex: mutex used to safely manipulate searcher_count;
-        writerCount: number of writers running/queued;
-        text: text to be appended to the list
+        text: text to be appended to the list;
+        writerCount: number of running writers
 */
 void *writer(void *args) {
     Writer_args *arg = (Writer_args*) args;
@@ -121,9 +116,7 @@ void *writer(void *args) {
 /* deleter
     Arguments:
         list: linked list;
-        noWriter: writer mutex;
-        noSearcher: searcher mutex;
-        index: list index to be deleted;
+        index: list index to be deleted
 */
 void *deleter(void *args) {
     Deleter_args *arg = (Deleter_args*) args;
@@ -148,6 +141,5 @@ void *deleter(void *args) {
     sem_post(&noSearcher);
     sem_post(&noWriter);
     sem_post(&turnStile);
-
 
 }
