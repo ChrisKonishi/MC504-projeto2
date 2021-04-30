@@ -6,24 +6,23 @@
 
 #include "linked_list.h"
 
+extern sem_t noSearcher, searcherSwitchMutex, noWriter, writerMutex, writerSwitchMutex, turnStile;
+
 /* Thread arguments structs */
 
 typedef struct Searcher_args {
     LinkedList *list;
-    sem_t noSearcher, searcherSwitchMutex, turnStile;
     int *searcherCount, index;
 } Searcher_args;
 
 typedef struct Writer_args {
     LinkedList *list;
-    sem_t noWriter, writerMutex, writerSwitchMutex, turnStile;
     char *text;
     int *writerCount;
 } Writer_args;
 
 typedef struct Deleter_args {
     LinkedList *list;
-    sem_t noSearcher, noWriter, turnStile;
     int index;
 } Deleter_args;
 
@@ -48,32 +47,32 @@ void *searcher(void *args) {
     int index = arg->index;
 
     /* turnStile is used to avoid deleter starvation: searcher and writers will wait once a deleter is queued */
-    // sem_wait(&turnStile);
-    // sem_post(&turnStile);
+    sem_wait(&turnStile);
+    sem_post(&turnStile);
 
     /* If there is at least one active seacher, locks the noSearcher semaphore (used by the deleter) */
-    sem_wait(&arg->searcherSwitchMutex);
+    sem_wait(&searcherSwitchMutex);
         *searcherCount = *searcherCount + 1;
         printf("Entrando: %d\n", *searcherCount);
         if (*searcherCount == 1) {
-          sem_wait(&arg->noSearcher);
+          sem_wait(&noSearcher);
           printf("Travou noSearcher\n");
         }
-    sem_post(&arg->searcherSwitchMutex);
+    sem_post(&searcherSwitchMutex);
 
     /* Critical session */
     sleep(5);
     char *text = get_item(list, index);
     //printf("Palavra revisada: %s\n", text);
 
-    sem_wait(&arg->searcherSwitchMutex);
+    sem_wait(&searcherSwitchMutex);
         *searcherCount = *searcherCount - 1;
         printf("Saindo: %d\n", *searcherCount);
         if (*searcherCount == 0) {
           printf("Destravou noSearcher\n");
-          sem_post(&arg->noSearcher);
+          sem_post(&noSearcher);
         }
-    sem_post(&arg->searcherSwitchMutex);
+    sem_post(&searcherSwitchMutex);
 
 }
 
@@ -89,33 +88,32 @@ void *searcher(void *args) {
 void *writer(void *args) {
     Writer_args *arg = (Writer_args*) args;
     LinkedList *list = arg->list;
-    sem_t turnStile = arg->turnStile;
     int *writerCount = arg->writerCount;
     char *text = arg->text;
 
-    // sem_wait(&turnStile);
-    // sem_post(&turnStile);
+    sem_wait(&turnStile);
+    sem_post(&turnStile);
 
-    sem_wait(&arg->writerSwitchMutex);
+    sem_wait(&writerSwitchMutex);
         *writerCount = *writerCount + 1;
         if (*writerCount == 1) {
-          sem_wait(&arg->noWriter);
+          sem_wait(&noWriter);
         }
-    sem_post(&arg->writerSwitchMutex);
-    sem_wait(&arg->writerMutex);
+    sem_post(&writerSwitchMutex);
+    sem_wait(&writerMutex);
 
     /* Critical session */
     printf("Writer entrando\n");
     append(list, text);
     //printf("Palavra escrita: %s\n", text);
 
-    sem_post(&arg->writerMutex);
-    sem_wait(&arg->writerSwitchMutex);
+    sem_post(&writerMutex);
+    sem_wait(&writerSwitchMutex);
         *writerCount = *writerCount - 1;
         if (*writerCount == 0) {
-          sem_post(&arg->noWriter);
+          sem_post(&noWriter);
         }
-    sem_post(&arg->writerSwitchMutex);
+    sem_post(&writerSwitchMutex);
     printf("Writer saindo\n");
 
 }
@@ -132,11 +130,11 @@ void *deleter(void *args) {
     LinkedList *list = arg->list;
     int index = arg->index;
 
-    //sem_wait(&turnStile);
+    sem_wait(&turnStile);
     printf("Esperando sinal\n");
 
-    sem_wait(&arg->noWriter);
-    sem_wait(&arg->noSearcher);
+    sem_wait(&noWriter);
+    sem_wait(&noSearcher);
 
     char *text = get_item(list, index);
     printf("Deleter entrou\n");
@@ -147,9 +145,9 @@ void *deleter(void *args) {
 
     printf("Deleter saindo\n");
 
-    sem_post(&arg->noSearcher);
-    sem_post(&arg->noWriter);
-    //sem_post(&turnStile);
+    sem_post(&noSearcher);
+    sem_post(&noWriter);
+    sem_post(&turnStile);
 
 
 }

@@ -5,9 +5,9 @@
 
 #include "monks.h"
 
-int main() {
+sem_t noSearcher, searcherSwitchMutex, noWriter, writerMutex, writerSwitchMutex, turnStile;
 
-    sem_t noSearcher, searcherSwitchMutex, noWriter, writerMutex, writerSwitchMutex, turnStile;
+int main() {
 
     sem_init(&noSearcher, 0, 1);
     sem_init(&searcherSwitchMutex, 0, 1);
@@ -35,25 +35,15 @@ int main() {
 
     for (int i = 0; i < 5; i++) {
       s_args[i].list = list;
-      s_args[i].noSearcher = noSearcher;
-      s_args[i].searcherSwitchMutex = searcherSwitchMutex;
-      s_args[i].turnStile = turnStile;
       s_args[i].searcherCount = searcherCount;
       s_args[i].index = i;
     }
 
     w_args.list = list;
-    w_args.noWriter = noWriter;
-    w_args.writerMutex = writerMutex;
-    w_args.writerSwitchMutex = writerSwitchMutex;
-    w_args.turnStile = turnStile;
     w_args.writerCount = writerCount;
     w_args.text = "ESCRITA";
 
     d_args.list = list;
-    d_args.noSearcher = noSearcher;
-    d_args.noWriter = noWriter;
-    d_args.turnStile = turnStile;
     d_args.index = 4;
 
     pthread_create(&thr[0], NULL, searcher, (void*) &s_args[4]);
