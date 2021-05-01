@@ -123,12 +123,10 @@ void append(LinkedList *list, char *text){
 }
 
 void print_list(LinkedList *list){
-    FILE *f = fopen("log.txt", "a");
     printf("List Status\n");
     for (int i=0; i<list->len; i++){
-        fprintf(f, "%s\n", get_item(list, i));
+        printf("%s\n", get_item(list, i));
     }
-    fclose(f);
 }
 
 
