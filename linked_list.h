@@ -66,7 +66,7 @@ Node* get_node(LinkedList *list, int idx){
 }
 
 
-/* 
+/*
 Args:
     list: the linked list
     idx: index of the item to retrieve (0 index)
@@ -95,7 +95,7 @@ void del_item(LinkedList *list, int idx){
         prev->next = aux->next;
         free(aux);
     }
-    list->len--;    
+    list->len--;
 }
 
 void insert_item(LinkedList *list, char *text, int idx){
@@ -123,10 +123,12 @@ void append(LinkedList *list, char *text){
 }
 
 void print_list(LinkedList *list){
+    FILE *f = fopen("log.txt", "a");
     printf("List Status\n");
     for (int i=0; i<list->len; i++){
-        printf("%s\n", get_item(list, i));
+        fprintf(f, "%s\n", get_item(list, i));
     }
+    fclose(f);
 }
 
 
