@@ -22,7 +22,6 @@ typedef struct {
 
 LinkedList *create_list();
 void del_list(LinkedList *list);
-void del_list(LinkedList *list);
 Node* get_node(LinkedList *list, int idx);
 char* get_item(LinkedList *list, int idx);
 void del_item(LinkedList *list, int idx);
@@ -48,7 +47,6 @@ void del_list(LinkedList *list){
         free(aux);
     }
     free(list);
-    return;
 }
 
 Node* get_node(LinkedList *list, int idx){
