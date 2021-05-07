@@ -7,7 +7,7 @@
 #include "linked_list.h"
 
 extern int run;
-extern int x_pos[8], y_pos[8];
+extern int x_pos[13], y_pos[13];
 extern sem_t noSearcher, searcherSwitchMutex, noWriter, writerMutex, writerSwitchMutex, turnStile;
 
 /* Thread arguments structs */
