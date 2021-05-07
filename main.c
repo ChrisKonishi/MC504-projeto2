@@ -62,6 +62,7 @@ int main() {
 
     d_args.list = list;
     d_args.index = 0;
+    d_args.id = 7;
 
     for (int i=0; i<8; i++){
         y_pos[i] = 10;
