@@ -28,6 +28,7 @@ typedef struct Writer_args {
 typedef struct Deleter_args {
     LinkedList *list;
     int index;
+    int id;
 } Deleter_args;
 
 
@@ -152,7 +153,7 @@ void *deleter(void *args) {
     Deleter_args *arg = (Deleter_args*) args;
     LinkedList *list = arg->list;
     int index = arg->index;
-    int id = 7;
+    int id = arg->id;
 
     sem_wait(&turnStile);
     //printf("Esperando sinal\n");
