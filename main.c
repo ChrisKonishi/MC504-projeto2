@@ -41,6 +41,7 @@ int main() {
     General_args  g_args[MAX_THREAD];
     int *searcherCount = malloc(sizeof(int*));
     int *writerCount = malloc(sizeof(int*));
+    // Change two arrays bellow to change program entry
     char types[MAX_THREAD] = {'S','S','S','W','W','D','D','S','S','W','W','D','D'};
     int indexes[MAX_THREAD] = {4,1,2,-1,-1,0,0,4,4,-1,-1,0,0};
     *searcherCount = 0;

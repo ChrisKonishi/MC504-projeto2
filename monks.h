@@ -50,6 +50,7 @@ void *monk(void *args);
         list: linked list;
         index: item to be searched;
         searcherCount: number of running searchers
+        id: Thread ID
 */
 
 void *monk(void *args){
@@ -112,6 +113,7 @@ void searcher(LinkedList *list, int *searcherCount, int index, int id) {
         list: linked list;
         text: text to be appended to the list;
         writerCount: number of running writers
+        id: Thread ID
 */
 void writer(LinkedList *list, int *writerCount, char *text, int id) {
     while(run){
@@ -156,6 +158,7 @@ void writer(LinkedList *list, int *writerCount, char *text, int id) {
     Arguments:
         list: linked list;
         index: list index to be deleted
+        id: Thread ID
 */
 void deleter(LinkedList *list, int index, int id) {
     while(run){
