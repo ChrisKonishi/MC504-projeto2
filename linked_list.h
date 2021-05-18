@@ -2,6 +2,7 @@
 #define LINKED_LIST_H
 
 #define text_LEN 255
+#define MAX_THREAD 13
 
 #include <stdlib.h>
 #include <stdio.h>

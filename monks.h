@@ -12,7 +12,7 @@ extern sem_t noSearcher, searcherSwitchMutex, noWriter, writerMutex, writerSwitc
 
 /* Thread arguments structs */
 
-typedef struct Searcher_args {
+/*typedef struct Searcher_args {
     LinkedList *list;
     int *searcherCount, index;
     int id;
@@ -29,12 +29,20 @@ typedef struct Deleter_args {
     LinkedList *list;
     int index;
     int id;
-} Deleter_args;
+} Deleter_args;*/
 
+typedef struct General_args {
+    LinkedList *list;
+    int id;
+    int *searcherCount, index, *writerCount;
+    char *text;
+    char type;
+} General_args;
 
-void *searcher(void *args);
-void *writer(void *args);
-void *deleter(void *args);
+void searcher(LinkedList *list, int *searcherCount, int index, int id);
+void writer(LinkedList *list, int *writerCount, char *text, int id);
+void deleter(LinkedList *list, int index, int id);
+void *monk(void *args);
 
 
 /* searcher
@@ -42,16 +50,25 @@ void *deleter(void *args);
         list: linked list;
         index: item to be searched;
         searcherCount: number of running searchers
+        id: Thread ID
 */
-void *searcher(void *args) {
+
+void *monk(void *args){
+    General_args *g_args = (General_args*) args;
+    if (g_args->type == 'S'){
+        searcher(g_args->list,g_args->searcherCount,g_args->index,g_args->id);
+    } else if (g_args->type == 'W'){
+        writer(g_args->list,g_args->writerCount,g_args->text,g_args->id);
+    } else{
+        deleter(g_args->list,g_args->index,g_args->id);
+    }
+    return NULL;
+}
+
+void searcher(LinkedList *list, int *searcherCount, int index, int id) {
     while(run){
 
     }
-    Searcher_args *arg = (Searcher_args*) args;
-    LinkedList *list = arg->list;
-    int *searcherCount = arg->searcherCount;
-    int index = arg->index;
-    int id = arg->id;
 
     /* turnStile is used to avoid deleter starvation: searcher and writers will wait once a deleter is queued */
     sem_wait(&turnStile);
@@ -96,16 +113,12 @@ void *searcher(void *args) {
         list: linked list;
         text: text to be appended to the list;
         writerCount: number of running writers
+        id: Thread ID
 */
-void *writer(void *args) {
+void writer(LinkedList *list, int *writerCount, char *text, int id) {
     while(run){
 
     }
-    Writer_args *arg = (Writer_args*) args;
-    LinkedList *list = arg->list;
-    int *writerCount = arg->writerCount;
-    char *text = arg->text;
-    int id = arg->id;
 
     sem_wait(&turnStile);
     sem_post(&turnStile);
@@ -145,15 +158,12 @@ void *writer(void *args) {
     Arguments:
         list: linked list;
         index: list index to be deleted
+        id: Thread ID
 */
-void *deleter(void *args) {
+void deleter(LinkedList *list, int index, int id) {
     while(run){
 
     }
-    Deleter_args *arg = (Deleter_args*) args;
-    LinkedList *list = arg->list;
-    int index = arg->index;
-    int id = arg->id;
 
     sem_wait(&turnStile);
     //printf("Esperando sinal\n");
