@@ -14,11 +14,11 @@ O problema foi resolvido utilizando semáforos (monk.h):
 
 - Para evitar _starvation_ de um apagador, escritores e leitores devem passar por uma catraca que é bloqueada pelo apagador.
 - Tanto escritores quanto leitores possuem switches que impedem o apagador de continuar se houver algum deles.
-- O apagador possui um mutex para garantir a exclusão mútua com outros apagadores
+- O escritor possui um mutex para garantir a exclusão mútua com outros apagadores
 
 ## Visualização
 
-A visualização e execução do programa foram feitas na main.c utilizando a bibliote ncurses.
+A visualização e execução do programa foram feitas na main.c utilizando a biblioteca ncurses.
 
 
 ## Compilando
